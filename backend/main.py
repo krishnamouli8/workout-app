@@ -1,7 +1,11 @@
 from fastapi import FastAPI
-from fastapi.middleware import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
+from .db.database import Base, engine
+from .routers import auth
 
 app = FastAPI()
+
+Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,3 +18,5 @@ app.add_middleware(
 @app.get("/")
 def health_check():
     return 'Reached backend!'
+
+app.include_router(auth.router)
